@@ -1,0 +1,46 @@
+function alfas=Algoritmo(a,b,n)
+ %Vamos a parametrizar las funciones p,q y f
+ syms x
+ r = 3
+ f = x^4+9*x^2
+ p = x
+ q = x
+ % calculamos la porción del intervalo
+ h=(b-a)/n
+ %definimos nuetros Xk, Xk+1
+ Xk=a
+ Xk1=a+h
+ % definimos la matriz y el vector
+ A=zeros(n)
+ B=zeros(n,1)
+ % insertamos los valores iniciales en la matriz A y en el vector B
+ A(1,1)=(-1*(subs(p,Xk)+subs(p,Xk1))/(2*h)) + (subs(q,Xk1)*h/2)
+ B(1,1)=subs(f,Xk1)*h/2
+ for k =2:n
+ %actualizamos el valor de xk
+ Xk=Xk+h
+ Xk1=Xk1+h
+ %hallamos la integral para los elementos de la diagonal principal
+ intA1= (-1*(subs(p,Xk)+subs(p,Xk1))/(2*h)) + (subs(q,Xk1)*h/2)
+ %hallamos la integral para los elementos restantes
+ intA2 = (subs(p,Xk)+subs(p,Xk1))/(2*h)
+ %llenamos la matriz de 2 x 2
+ A(k-1,k-1)=A(k-1,k-1)+intA1
+ A(k-1,k)=intA2
+ A(k,k-1)=intA2
+ A(k,k)=intA1
+ %llenamos el vector
+ %en la primera posición colocamos
+ B(k-1,1)=B(k-1,1)+subs(f,Xk)*h/2
+ %en la segunda posición colocamos
+ B(k,1)=subs(f,Xk1)*h/2
+ end
+ %calculamos el ultimo elemento del vector
+ B(n,1)=B(n,1)-(r*subs(p,b))
+ %obtenemos los alfas de la combinacion lineal
+ % alfa = A^-1 * B
+ alfas=inv(A)*B
+ %añadimos un cero a la izquierda del vector por la condición inicial
+ %del problema u(a)=0
+ alfas=[0;alfas]
+end
